@@ -1,0 +1,359 @@
+/* CompilerViz - simple stylesheet for a college project. */
+
+body {
+  margin: 0;
+  padding: 20px;
+  background: #f5f5f5;
+  color: #222;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+}
+
+.app {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ---------- header ---------- */
+
+.header {
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.subtitle {
+  margin: 4px 0 0;
+  color: #555;
+}
+
+/* ---------- stage navigation ---------- */
+
+.stage-tabs {
+  margin-bottom: 16px;
+}
+
+.stage-tab {
+  margin: 0 6px 6px 0;
+  padding: 6px 12px;
+  border: 1px solid #bbb;
+  border-radius: 3px;
+  background: #fff;
+  color: #222;
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.stage-tab.is-active {
+  border-color: #1a73e8;
+  background: #1a73e8;
+  color: #fff;
+}
+
+/* ---------- panels ---------- */
+
+.panels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.panel {
+  flex: 1 1 400px;
+  /* lets a panel shrink below the intrinsic width of the editor inside it */
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  background: #fff;
+  height: 500px;
+}
+
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid #ccc;
+  background: #fafafa;
+  padding: 8px 12px;
+}
+
+.panel-head h2 {
+  margin: 0;
+  font-size: 15px;
+}
+
+.analyze-btn {
+  padding: 6px 14px;
+  border: 1px solid #1a73e8;
+  border-radius: 3px;
+  background: #1a73e8;
+  color: #fff;
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.analyze-btn:hover {
+  background: #1666d0;
+}
+
+.count {
+  color: #555;
+  font-size: 13px;
+}
+
+.panel-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: auto;
+  padding: 12px;
+}
+
+.editor-shell {
+  flex: 1;
+  min-height: 0;
+}
+
+/* ---------- token table ---------- */
+
+.token-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.token-table th,
+.token-table td {
+  border: 1px solid #ccc;
+  padding: 5px 8px;
+  text-align: left;
+}
+
+.token-table th {
+  background: #eee;
+}
+
+.mono {
+  font-family: "Courier New", Courier, monospace;
+}
+
+.empty-note {
+  margin: 0;
+  color: #666;
+}
+
+.footer {
+  margin-top: 16px;
+  border-top: 1px solid #ccc;
+  padding-top: 10px;
+  color: #666;
+  font-size: 13px;
+}
+
+
+/* ---------- AST diagram (React Flow) ---------- */
+
+.ast-view {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.ast-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.fit-view-btn {
+  padding: 4px 10px;
+  border: 1px solid #bbb;
+  border-radius: 3px;
+  background: #fff;
+  color: #222;
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.fit-view-btn:hover {
+  border-color: #1a73e8;
+}
+
+.ast-canvas {
+  flex: 1;
+  min-height: 300px;
+  border: 1px solid #ccc;
+  background: #fff;
+}
+
+.ast-node-value {
+  margin-top: 2px;
+  font-family: "Courier New", Courier, monospace;
+  font-weight: normal;
+  color: #a33;
+}
+
+/*
+ * A tree diagram is wide, so when the AST stage is open the editor panel
+ * shrinks and the output panel takes most of the width.
+ */
+.panels-wide-output .panel:first-child {
+  flex: 0 1 330px;
+}
+
+.panels-wide-output .panel:last-child {
+  flex: 1 1 620px;
+}
+
+.panels-wide-output .panel {
+  height: 560px;
+}
+
+/* ---------- AST build errors ---------- */
+
+.errors {
+  border: 1px solid #d99;
+  background: #fdf0f0;
+  padding: 10px 14px;
+  color: #a33;
+  font-size: 13px;
+}
+
+.errors p {
+  margin: 6px 0 0;
+  font-family: "Courier New", Courier, monospace;
+}
+
+/* ---------- semantic analysis ---------- */
+
+.semantic-view h3 {
+  margin: 0 0 8px;
+  font-size: 14px;
+}
+
+.semantic-view h3 + * {
+  margin-bottom: 18px;
+}
+
+.semantic-ok {
+  margin: 0;
+  border: 1px solid #b6d7b6;
+  background: #f0f7f0;
+  padding: 8px 12px;
+  color: #2c6e2c;
+}
+
+.error-place {
+  font-weight: bold;
+}
+
+/* ---------- intermediate representation ---------- */
+
+.ir-view h3 {
+  margin: 0 0 8px;
+  font-size: 14px;
+}
+
+.ir-warning {
+  margin: 0 0 12px;
+  border: 1px solid #d9c089;
+  background: #fdf8ec;
+  padding: 8px 12px;
+  color: #80631a;
+  font-size: 13px;
+}
+
+/* The listing itself. counter-reset/increment draws the line numbers, so the
+   numbers are never part of the text the user would copy. */
+.ir-code {
+  margin: 0;
+  border: 1px solid #ccc;
+  background: #fff;
+  padding: 10px 0;
+  list-style: none;
+  counter-reset: ir-line;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 13px;
+}
+
+.ir-line {
+  position: relative;
+  counter-increment: ir-line;
+  /* Instructions sit one step in; labels are pulled back out below. */
+  padding: 1px 8px 1px 72px;
+  white-space: pre;
+}
+
+.ir-line::before {
+  content: counter(ir-line);
+  position: absolute;
+  left: 8px;
+  width: 40px;
+  color: #999;
+  text-align: right;
+}
+
+.ir-line-label {
+  padding-left: 52px;
+  font-weight: bold;
+  color: #1a4f8a;
+}
+
+.ir-line-jump {
+  color: #1a4f8a;
+}
+
+.ir-note {
+  margin: 10px 0 0;
+  color: #666;
+  font-size: 13px;
+}
+
+/* ---------- optimization ---------- */
+
+.opt-view h3 {
+  margin: 0 0 8px;
+  font-size: 14px;
+}
+
+/* The two listings sit side by side, and drop under each other when the panel
+   is too narrow for them. */
+.opt-columns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 18px;
+}
+
+.opt-column {
+  flex: 1 1 280px;
+  min-width: 0;
+}
+
+.opt-applied {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+  color: #2c6e2c;
+  font-size: 13px;
+}
+
+.opt-applied li {
+  padding: 2px 0;
+}
