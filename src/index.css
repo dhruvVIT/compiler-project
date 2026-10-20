@@ -1,5 +1,3 @@
-/* CompilerViz - simple stylesheet for a college project. */
-
 body {
   margin: 0;
   padding: 20px;
@@ -13,8 +11,6 @@ body {
   max-width: 1200px;
   margin: 0 auto;
 }
-
-/* ---------- header ---------- */
 
 .header {
   border-bottom: 1px solid #ccc;
@@ -31,8 +27,6 @@ body {
   margin: 4px 0 0;
   color: #555;
 }
-
-/* ---------- stage navigation ---------- */
 
 .stage-tabs {
   margin-bottom: 16px;
@@ -56,8 +50,6 @@ body {
   color: #fff;
 }
 
-/* ---------- panels ---------- */
-
 .panels {
   display: flex;
   flex-wrap: wrap;
@@ -67,7 +59,6 @@ body {
 
 .panel {
   flex: 1 1 400px;
-  /* lets a panel shrink below the intrinsic width of the editor inside it */
   min-width: 0;
   display: flex;
   flex-direction: column;
@@ -126,8 +117,6 @@ body {
   min-height: 0;
 }
 
-/* ---------- token table ---------- */
-
 .token-table {
   width: 100%;
   border-collapse: collapse;
@@ -161,9 +150,6 @@ body {
   color: #666;
   font-size: 13px;
 }
-
-
-/* ---------- AST diagram (React Flow) ---------- */
 
 .ast-view {
   display: flex;
@@ -208,10 +194,6 @@ body {
   color: #a33;
 }
 
-/*
- * A tree diagram is wide, so when the AST stage is open the editor panel
- * shrinks and the output panel takes most of the width.
- */
 .panels-wide-output .panel:first-child {
   flex: 0 1 330px;
 }
@@ -223,8 +205,6 @@ body {
 .panels-wide-output .panel {
   height: 560px;
 }
-
-/* ---------- AST build errors ---------- */
 
 .errors {
   border: 1px solid #d99;
@@ -238,8 +218,6 @@ body {
   margin: 6px 0 0;
   font-family: "Courier New", Courier, monospace;
 }
-
-/* ---------- semantic analysis ---------- */
 
 .semantic-view h3 {
   margin: 0 0 8px;
@@ -262,8 +240,6 @@ body {
   font-weight: bold;
 }
 
-/* ---------- intermediate representation ---------- */
-
 .ir-view h3 {
   margin: 0 0 8px;
   font-size: 14px;
@@ -278,8 +254,6 @@ body {
   font-size: 13px;
 }
 
-/* The listing itself. counter-reset/increment draws the line numbers, so the
-   numbers are never part of the text the user would copy. */
 .ir-code {
   margin: 0;
   border: 1px solid #ccc;
@@ -294,7 +268,6 @@ body {
 .ir-line {
   position: relative;
   counter-increment: ir-line;
-  /* Instructions sit one step in; labels are pulled back out below. */
   padding: 1px 8px 1px 72px;
   white-space: pre;
 }
@@ -324,15 +297,11 @@ body {
   font-size: 13px;
 }
 
-/* ---------- optimization ---------- */
-
 .opt-view h3 {
   margin: 0 0 8px;
   font-size: 14px;
 }
 
-/* The two listings sit side by side, and drop under each other when the panel
-   is too narrow for them. */
 .opt-columns {
   display: flex;
   flex-wrap: wrap;

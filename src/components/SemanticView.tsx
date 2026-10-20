@@ -1,16 +1,7 @@
-/**
- * Shows the result of semantic analysis: the errors that were found (if any)
- * and the symbol table that was built.
- *
- * This component only displays what the analyser returned - there is no
- * analysis logic here.
- */
-
 import type { SemanticResult } from '../semantic/semanticTypes';
 
 interface SemanticViewProps {
   result: SemanticResult | null;
-  /** Set when the code could not be turned into an AST in the first place. */
   astError: string | null;
 }
 

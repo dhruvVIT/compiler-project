@@ -1,17 +1,8 @@
-/**
- * Shows the final stage: the IR before optimization, the IR after it, and
- * which optimizations fired.
- *
- * This component only displays what the optimizer returned - there is no
- * optimization logic here.
- */
-
 import type { OptimizationResult } from '../optimizer/optimizer';
 import { IRCodeList } from './IRCodeList';
 
 interface OptimizationViewerProps {
   result: OptimizationResult | null;
-  /** Set when the code could not be turned into an AST in the first place. */
   astError: string | null;
 }
 

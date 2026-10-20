@@ -1,7 +1,3 @@
-/**
- * Renders the real Token[] produced by the lexer. Nothing here is hardcoded.
- */
-
 import type { Token } from '../types/compiler';
 
 interface TokenTableProps {

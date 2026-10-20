@@ -1,19 +1,3 @@
-/**
- * CompilerViz - application shell.
- *
- * The pipeline implemented so far:
- *
- *   source -> tokenize(source) -> Token[] -> buildAST(tokens) -> ASTNode
- *          -> analyzeSemantics(ast) -> SemanticResult
- *          -> generateIR(ast) -> IRInstruction[]
- *          -> optimizeIR(ir) -> OptimizationResult
- *
- * The optimized IR is the final output: there is no code-generation stage.
- *
- * Each stage has its own view. Everything is recalculated whenever the source
- * code changes, so switching to a stage always shows the current code.
- */
-
 import { useMemo, useState } from 'react';
 import { CodeEditor } from './components/CodeEditor';
 import { StageTabs } from './components/StageTabs';
@@ -44,7 +28,6 @@ const DEFAULT_SOURCE = `int main() {
     return c;
 }`;
 
-/** The heading shown above the output panel for each stage. */
 const PANEL_TITLES: Record<ActiveStage, string> = {
   source: 'Tokens',
   tokens: 'Tokens',
@@ -59,11 +42,8 @@ export default function App() {
   const [hasAnalyzed, setHasAnalyzed] = useState(false);
   const [activeStage, setActiveStage] = useState<ActiveStage>('source');
 
-  // Stage 1: source code -> tokens.
   const tokens = useMemo(() => tokenize(source), [source]);
 
-  // Stage 2: tokens -> AST. buildAST throws when the code is not valid, so we
-  // keep either the tree or the message, never both.
   const { ast, astError } = useMemo(() => {
     try {
       return { ast: buildAST(tokens) as ASTNode | null, astError: null as string | null };
@@ -79,7 +59,6 @@ export default function App() {
     }
   }
 
-  // Picking a stage shows its output straight away - no extra button needed.
   function handleSelectStage(stage: ActiveStage) {
     setActiveStage(stage);
     if (stage !== 'source') {
@@ -87,26 +66,16 @@ export default function App() {
     }
   }
 
-  // Stage 3: AST -> symbol table + semantic errors.
   const semanticResult = useMemo(() => (ast === null ? null : analyzeSemantics(ast)), [ast]);
 
-  // Stage 4: AST -> three-address code. The IR is generated from the same AST
-  // the earlier stages used, never from the source or the tokens.
   const irInstructions = useMemo(() => generateIR(ast), [ast]);
 
-  // Stage 5: IR -> optimized IR. The optimizer is handed the instructions the
-  // IR stage already produced; it never goes back to the AST.
   const optimizationResult = useMemo(() => optimizeIR(irInstructions), [irInstructions]);
 
-  // The "Source" tab shows the token table as well, so those two stages share
-  // one view and the token count belongs to both of them.
   const showingTokens = activeStage === 'source' || activeStage === 'tokens';
 
-  // The AST diagram and the two side-by-side IR listings both need a wider
-  // output panel than the token table does.
   const needsWideOutput = activeStage === 'ast' || activeStage === 'optimization';
 
-  /** Picks the view for the stage the user has selected. */
   function renderOutput() {
     if (activeStage === 'ast') {
       return <ASTViewer ast={ast} error={astError} />;

@@ -1,43 +1,16 @@
-/**
- * CompilerViz - Semantic Analyzer (Phase 3)
- * -----------------------------------------
- * Input : ASTNode         (the tree built in Phase 2)
- * Output: SemanticResult  (the symbol table + the errors that were found)
- *
- * The analyser walks the AST. For each node it performs the check that belongs
- * to that node and then visits the node's children:
- *
- *   AST node -> look at its type -> run the check -> visit the children
- *
- * Errors are COLLECTED, not thrown, so one program can report several problems
- * at once. The analyser never looks at the source text or the tokens; every
- * answer comes from the AST and the symbol table.
- */
-
 import type { ASTNode } from '../ast/astTypes';
 import { SymbolTable } from './symbolTable';
 import type { DataType, ExpressionType, SemanticError, SemanticResult } from './semanticTypes';
 
-/** main() returns int, so `return` expressions are checked against this. */
 const MAIN_RETURN_TYPE: DataType = 'int';
-
-/* ------------------------------------------------------------------ */
-/* Analyzer state                                                      */
-/* ------------------------------------------------------------------ */
 
 let table = new SymbolTable();
 let errors: SemanticError[] = [];
 
-/** Records a problem, together with the position stored on the AST node. */
 function addError(message: string, astNode?: ASTNode) {
   errors.push({ message, line: astNode?.line, column: astNode?.column });
 }
 
-/* ------------------------------------------------------------------ */
-/* Entry point                                                         */
-/* ------------------------------------------------------------------ */
-
-/** Checks the program and returns the symbol table and the errors found. */
 export function analyzeSemantics(ast: ASTNode): SemanticResult {
   table = new SymbolTable();
   errors = [];
@@ -47,7 +20,6 @@ export function analyzeSemantics(ast: ASTNode): SemanticResult {
   return { symbols: table.getSymbols(), errors };
 }
 
-/** Program -> MainFunction */
 function analyzeProgram(programNode: ASTNode) {
   for (const child of programNode.children) {
     if (child.type === 'MainFunction') {
@@ -56,12 +28,6 @@ function analyzeProgram(programNode: ASTNode) {
   }
 }
 
-/**
- * MainFunction -> Block
- *
- * The body of main() IS the "main" scope, so the block below it does not open
- * a second scope of its own.
- */
 function analyzeMainFunction(functionNode: ASTNode) {
   table.enterScope('main');
 
@@ -74,23 +40,17 @@ function analyzeMainFunction(functionNode: ASTNode) {
   table.exitScope();
 }
 
-/** Runs the checks for every statement inside a block. */
 function analyzeStatements(blockNode: ASTNode) {
   for (const statement of blockNode.children) {
     analyzeStatement(statement);
   }
 }
 
-/** A nested block: its own scope, so its variables disappear at the end. */
 function analyzeBlock(blockNode: ASTNode) {
   table.enterBlockScope();
   analyzeStatements(blockNode);
   table.exitScope();
 }
-
-/* ------------------------------------------------------------------ */
-/* Statements                                                          */
-/* ------------------------------------------------------------------ */
 
 function analyzeStatement(statement: ASTNode) {
   switch (statement.type) {
@@ -110,18 +70,11 @@ function analyzeStatement(statement: ASTNode) {
       analyzeBlock(statement);
       break;
     default:
-      // Anything else here is an expression used as a statement, e.g. "x++;".
       getExpressionType(statement);
       break;
   }
 }
 
-/**
- * int a = 10;
- *
- * The initialiser is checked FIRST, so that "int a = a;" correctly reports that
- * `a` is not declared yet. Then the variable is added to the current scope.
- */
 function analyzeVariableDeclaration(declaration: ASTNode) {
   const declaredType = declaration.value as DataType;
   const nameNode = declaration.children[0];
@@ -134,13 +87,12 @@ function analyzeVariableDeclaration(declaration: ASTNode) {
 
   if (table.isDeclaredInCurrentScope(name)) {
     addError(`Variable '${name}' is already declared in this scope.`, declaration);
-    return; // the duplicate is not added to the symbol table
+    return;
   }
 
   table.declare(name, declaredType);
 }
 
-/** x = expression; */
 function analyzeAssignment(assignment: ASTNode) {
   const nameNode = assignment.children[0];
   const name = nameNode.value ?? '';
@@ -155,7 +107,6 @@ function analyzeAssignment(assignment: ASTNode) {
   checkAssignable(symbol.type, valueType, assignment.children[1]);
 }
 
-/** if (condition) statement [else statement] */
 function analyzeIfStatement(statement: ASTNode) {
   checkCondition(statement.children[0]);
   analyzeStatement(statement.children[1]);
@@ -164,7 +115,6 @@ function analyzeIfStatement(statement: ASTNode) {
   }
 }
 
-/** return expression; - main() returns int, so the value must fit an int. */
 function analyzeReturnStatement(statement: ASTNode) {
   const valueNode = statement.children[0];
   const valueType = getExpressionType(valueNode);
@@ -179,7 +129,6 @@ function analyzeReturnStatement(statement: ASTNode) {
   }
 }
 
-/** The condition of an if must be a bool. */
 function checkCondition(conditionNode: ASTNode) {
   const type = getExpressionType(conditionNode);
   if (type !== 'unknown' && type !== 'bool') {
@@ -187,42 +136,23 @@ function checkCondition(conditionNode: ASTNode) {
   }
 }
 
-/* ------------------------------------------------------------------ */
-/* Types                                                               */
-/* ------------------------------------------------------------------ */
-
-/** int and float are the numeric types. */
 function isNumeric(type: ExpressionType): boolean {
   return type === 'int' || type === 'float';
 }
 
-/**
- * Can a value of `valueType` be stored in a variable of `targetType`?
- *
- * The rule is deliberately simple: the types must match, except that an int
- * may be stored in a float (widening). Narrowing a float into an int is not
- * allowed, because it would silently lose the fractional part.
- */
 function isAssignable(targetType: DataType, valueType: ExpressionType): boolean {
-  if (valueType === 'unknown') return true; // already reported elsewhere
+  if (valueType === 'unknown') return true;
   if (targetType === valueType) return true;
   if (targetType === 'float' && valueType === 'int') return true;
   return false;
 }
 
-/** Reports a type mismatch if the value does not fit the target. */
 function checkAssignable(targetType: DataType, valueType: ExpressionType, where: ASTNode) {
   if (!isAssignable(targetType, valueType)) {
     addError(`Cannot assign ${valueType} to ${targetType}.`, where);
   }
 }
 
-/**
- * Works out the type of an expression.
- *
- * Returns "unknown" when the type cannot be decided, which happens after an
- * error has already been reported for that part of the expression.
- */
 function getExpressionType(expression: ASTNode): ExpressionType {
   switch (expression.type) {
     case 'Literal':
@@ -238,7 +168,6 @@ function getExpressionType(expression: ASTNode): ExpressionType {
   }
 }
 
-/** 10 -> int, 10.5 -> float, true/false -> bool, 'a' -> char */
 function getLiteralType(literal: ASTNode): ExpressionType {
   const text = literal.value ?? '';
 
@@ -248,7 +177,6 @@ function getLiteralType(literal: ASTNode): ExpressionType {
   return 'int';
 }
 
-/** The type of a variable comes from the symbol table. */
 function getIdentifierType(identifier: ASTNode): ExpressionType {
   const name = identifier.value ?? '';
   const symbol = table.lookup(name);
@@ -261,20 +189,11 @@ function getIdentifierType(identifier: ASTNode): ExpressionType {
   return symbol.type;
 }
 
-/**
- * a + b, a > b, a && b ...
- *
- *   + - * / %      both sides numeric; float if either side is float
- *   > < >= <=      both sides numeric; the result is bool
- *   == !=          both sides numeric, or both exactly the same type
- *   && ||          both sides bool
- */
 function getBinaryExpressionType(expression: ASTNode): ExpressionType {
   const operator = expression.value ?? '';
   const leftType = getExpressionType(expression.children[0]);
   const rightType = getExpressionType(expression.children[1]);
 
-  // A part of the expression was already wrong, so stay quiet about the rest.
   if (leftType === 'unknown' || rightType === 'unknown') return 'unknown';
 
   if (operator === '+' || operator === '-' || operator === '*' || operator === '/' || operator === '%') {
@@ -325,12 +244,6 @@ function getBinaryExpressionType(expression: ASTNode): ExpressionType {
   return 'unknown';
 }
 
-/**
- * !x, -x, x++, x--
- *
- *   !        the operand must be bool, the result is bool
- *   - ++ --  the operand must be numeric, the result keeps that type
- */
 function getUnaryExpressionType(expression: ASTNode): ExpressionType {
   const operator = expression.value ?? '';
   const operandType = getExpressionType(expression.children[0]);

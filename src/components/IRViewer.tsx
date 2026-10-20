@@ -1,19 +1,9 @@
-/**
- * Shows the Intermediate Representation: the Three-Address Code produced from
- * the AST, as a numbered listing.
- *
- * This component only displays what the generator returned - there is no
- * translation logic here.
- */
-
 import type { IRInstruction } from '../ir/irTypes';
 import { IRCodeList } from './IRCodeList';
 
 interface IRViewerProps {
   instructions: IRInstruction[];
-  /** Set when the code could not be turned into an AST in the first place. */
   astError: string | null;
-  /** How many problems semantic analysis reported, so we can warn about them. */
   semanticErrorCount: number;
 }
 
