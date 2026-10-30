@@ -1,6 +1,6 @@
 # CompilerViz
 
-Interactive Compiler Visualization Tool — a browser-based teaching aid that shows
+Interactive Compiler Visualization Tools — a browser-based teaching aid that shows
 what a compiler does to a program written in a controlled subset of C++.
 
 Everything runs in the browser. There is no backend, no database and no API.
